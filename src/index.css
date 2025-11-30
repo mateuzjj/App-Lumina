@@ -4,7 +4,9 @@
 
 @layer base {
   body {
-    @apply bg-[#030712] text-white overflow-hidden selection:bg-primary selection:text-white;
+    @apply bg-[#030712] text-white selection:bg-primary selection:text-white;
+    overflow-y: auto;
+    overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
   }
 }

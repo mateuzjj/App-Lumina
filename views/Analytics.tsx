@@ -1,9 +1,9 @@
 
 import React, { useMemo } from 'react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell } from 'recharts';
 import { Transaction, TransactionType } from '../types';
 import { CATEGORIES } from '../constants';
-import { TrendingUp, TrendingDown, Activity, AlertTriangle, Zap, Calendar, DollarSign, Wallet } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, AlertTriangle, Zap, Calendar, Wallet } from 'lucide-react';
 
 interface AnalyticsProps {
   transactions: Transaction[];
@@ -71,7 +71,8 @@ export const Analytics: React.FC<AnalyticsProps> = ({ transactions }) => {
     const rawMap = transactions
       .filter(t => t.type !== TransactionType.INCOME)
       .reduce((acc, tx) => {
-        acc[tx.category] = (acc[tx.category] || 0) + tx.amount;
+        const current = acc[tx.category] || 0;
+        acc[tx.category] = current + tx.amount;
         return acc;
       }, {} as Record<string, number>);
 
@@ -89,7 +90,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ transactions }) => {
                     cat?.color.includes('yellow') ? '#eab308' : '#8b5cf6'
         };
       })
-      .sort((a, b) => b.value - a.value);
+      .sort((a, b) => (b.value as number) - (a.value as number));
   }, [transactions]);
 
   if (transactions.length === 0) {

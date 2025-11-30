@@ -210,7 +210,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-white font-sans selection:bg-primary selection:text-white">
-      <div className="max-w-md mx-auto min-h-screen relative bg-background shadow-2xl overflow-hidden">
+      <div className="max-w-md mx-auto min-h-screen relative bg-background shadow-2xl overflow-x-hidden">
         <div className="h-safe-top w-full bg-background/50 backdrop-blur-sm sticky top-0 z-40"></div>
         <main className="px-6 min-h-[calc(100vh-80px)]">{renderView()}</main>
         {currentView !== 'add' && currentView !== 'settings' && (

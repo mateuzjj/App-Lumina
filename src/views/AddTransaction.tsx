@@ -68,6 +68,8 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ initialDate, onS
     }
   }, [category]);
 
+  const currentCategory = CATEGORIES.find(c => c.id === category);
+
   return (
     <div className="fixed inset-0 bg-[#030712] z-50 flex flex-col animate-slide-up h-full overflow-hidden select-none">
       
@@ -118,7 +120,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ initialDate, onS
          </div>
       </div>
 
-      <div className="bg-[#111827] rounded-t-[36px] border-t border-white/5 pb-8 shadow-[0_-10px_60px_rgba(0,0,0,0.6)] flex flex-col h-[55%] backdrop-blur-3xl relative z-20">
+      <div className="bg-[#111827] rounded-t-[36px] border-t border-white/5 pb-8 shadow-[0_-10px_60px_rgba(0,0,0,0.6)] flex flex-col h-auto max-h-[60%] backdrop-blur-3xl relative z-20">
         
         <div className="pt-6 pb-2">
             <div 
@@ -205,30 +207,30 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ initialDate, onS
             </div>
         )}
 
-        <div className="grid grid-cols-3 gap-1 px-4 pb-safe h-64">
+        <div className="grid grid-cols-3 gap-3 px-6 pb-safe mt-2">
             {['1','2','3','4','5','6','7','8','9'].map((digit) => (
                 <button
                     key={digit}
                     onClick={() => handleDigitPress(digit)}
-                    className="h-full rounded-xl text-2xl font-medium text-white hover:bg-white/5 active:bg-white/10 transition-colors active:scale-95 duration-100 outline-none select-none touch-manipulation"
+                    className="h-12 rounded-2xl text-xl font-medium text-white bg-white/5 hover:bg-white/10 active:bg-white/20 transition-all active:scale-95 duration-100 outline-none select-none touch-manipulation shadow-sm shadow-black/20"
                 >
                     {digit}
                 </button>
             ))}
-            <div className="h-full"></div> 
+            <div className="h-12"></div>
             
             <button
                 onClick={() => handleDigitPress('0')}
-                className="h-full rounded-xl text-2xl font-medium text-white hover:bg-white/5 active:bg-white/10 transition-colors active:scale-95 duration-100 outline-none select-none touch-manipulation"
+                className="h-12 rounded-2xl text-xl font-medium text-white bg-white/5 hover:bg-white/10 active:bg-white/20 transition-all active:scale-95 duration-100 outline-none select-none touch-manipulation shadow-sm shadow-black/20"
             >
                 0
             </button>
             
             <button
                 onClick={handleBackspace}
-                className="h-full rounded-xl flex items-center justify-center text-slate-400 hover:text-danger hover:bg-danger/10 transition-colors active:scale-95 duration-100 outline-none select-none touch-manipulation"
+                className="h-12 rounded-2xl flex items-center justify-center text-slate-400 hover:text-danger hover:bg-danger/10 transition-all active:scale-95 duration-100 outline-none select-none touch-manipulation"
             >
-                <Delete size={28} strokeWidth={1.5} />
+                <Delete size={22} strokeWidth={2} />
             </button>
         </div>
       </div>
