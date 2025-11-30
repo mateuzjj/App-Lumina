@@ -5,14 +5,16 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    height: 100%;
   }
   
   body {
     @apply bg-[#030712] text-white selection:bg-primary selection:text-white;
-    min-height: 100dvh;
+    min-height: 100%;
     margin: 0;
     padding: 0;
-    /* Removed overflow:hidden to allow native scroll */
+    overflow-y: auto; /* Force scroll capability */
+    -webkit-overflow-scrolling: touch; /* Momentum scroll */
   }
 
   #root {
