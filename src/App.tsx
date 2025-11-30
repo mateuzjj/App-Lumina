@@ -209,18 +209,20 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full flex justify-center bg-black">
+    <div className="fixed inset-0 w-full h-full bg-black flex justify-center">
       <div className="w-full max-w-md h-full bg-background relative flex flex-col shadow-2xl overflow-hidden font-sans">
         
+        {/* Top Safety Spacer */}
+        <div className="shrink-0 h-safe-top bg-background/50 backdrop-blur-sm z-40"></div>
+
         {/* Scrollable Content Container */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden w-full relative custom-scrollbar">
-          <div className="h-safe-top w-full sticky top-0 z-40 bg-background/50 backdrop-blur-sm"></div>
-          <main className="px-6 pb-24 min-h-full">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden w-full relative scroll-smooth">
+          <main className="px-6 pb-24">
             {renderView()}
           </main>
         </div>
 
-        {/* Navbar */}
+        {/* Navbar - Only show if not in modal views */}
         {currentView !== 'add' && currentView !== 'settings' && (
           <Navbar currentView={currentView} setView={setCurrentView} />
         )}
