@@ -1,0 +1,237 @@
+
+import React, { useState, useMemo, useEffect } from 'react';
+import { Navbar } from './components/Navbar';
+import { Dashboard } from './views/Dashboard';
+import { AddTransaction } from './views/AddTransaction';
+import { Analytics } from './views/Analytics';
+import { Planning } from './views/Planning';
+import { Settings } from './views/Settings';
+import { Investments } from './views/Investments';
+import { Transaction, Goal, FinancialSummary, TransactionType, Investment } from './types';
+
+const App: React.FC = () => {
+  const [currentView, setCurrentView] = useState('dashboard');
+  
+  // State for Month Navigation (Spreadsheet Tabs)
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  // Initialize from localStorage safely
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    try {
+      const saved = localStorage.getItem('lumina_transactions');
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error("Erro ao carregar transações", e);
+      return [];
+    }
+  });
+  
+  const [goals, setGoals] = useState<Goal[]>(() => {
+    try {
+      const saved = localStorage.getItem('lumina_goals');
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [investments, setInvestments] = useState<Investment[]>(() => {
+    try {
+      const saved = localStorage.getItem('lumina_investments');
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  // Persistence Effects
+  useEffect(() => {
+    localStorage.setItem('lumina_transactions', JSON.stringify(transactions));
+  }, [transactions]);
+
+  useEffect(() => {
+    localStorage.setItem('lumina_goals', JSON.stringify(goals));
+  }, [goals]);
+
+  useEffect(() => {
+    localStorage.setItem('lumina_investments', JSON.stringify(investments));
+  }, [investments]);
+
+  // --- Date Navigation Logic ---
+  const changeMonth = (offset: number) => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() + offset);
+    setCurrentDate(newDate);
+  };
+
+  // --- Filter Logic ---
+  const currentMonthTransactions = useMemo(() => {
+    return transactions.filter(tx => {
+      const txDate = new Date(tx.date);
+      
+      // Simple Logic: Show transaction if it belongs to selected Month/Year
+      return txDate.getMonth() === currentDate.getMonth() && 
+             txDate.getFullYear() === currentDate.getFullYear();
+    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [transactions, currentDate]);
+
+  // --- Financial Calculation (Realized vs Projected) ---
+  const summary: FinancialSummary = useMemo(() => {
+    const projected = { income: 0, expenses: 0, balance: 0 };
+    const realized = { income: 0, expenses: 0, balance: 0 };
+
+    currentMonthTransactions.forEach(tx => {
+      // 1. Calculate Projected (Competence / All items in month)
+      if (tx.type === TransactionType.INCOME) {
+        projected.income += tx.amount;
+      } else {
+        projected.expenses += tx.amount;
+      }
+
+      // 2. Calculate Realized (Cash / Only Paid items)
+      if (tx.status === 'paid') {
+        if (tx.type === TransactionType.INCOME) {
+          realized.income += tx.amount;
+        } else {
+          realized.expenses += tx.amount;
+        }
+      }
+    });
+
+    projected.balance = projected.income - projected.expenses;
+    realized.balance = realized.income - realized.expenses;
+
+    return {
+      projected,
+      realized,
+      savingsPotential: Math.max(0, projected.balance) // Based on projection
+    };
+  }, [currentMonthTransactions]);
+
+  // --- Actions ---
+  const handleAddTransaction = (newTx: any) => {
+    const tx: Transaction = {
+      ...newTx,
+      id: Math.random().toString(36).substr(2, 9)
+    };
+    setTransactions([tx, ...transactions]);
+    setCurrentView('dashboard');
+  };
+
+  const handleToggleStatus = (id: string) => {
+    setTransactions(prev => prev.map(tx => 
+      tx.id === id 
+        ? { ...tx, status: tx.status === 'paid' ? 'pending' : 'paid' } 
+        : tx
+    ));
+  };
+
+  const handleDeleteTransaction = (id: string) => {
+    if (window.confirm('Tem certeza que deseja excluir este lançamento?')) {
+      setTransactions(prev => prev.filter(tx => tx.id !== id));
+    }
+  };
+
+  const handleAddGoal = (goal: Goal) => {
+    setGoals([...goals, goal]);
+  };
+
+  const handleAddInvestment = (inv: Investment) => {
+    setInvestments([...investments, inv]);
+  };
+
+  const handleDeleteInvestment = (id: string) => {
+     setInvestments(prev => prev.filter(i => i.id !== id));
+  };
+
+  const handleResetData = () => {
+    if (window.confirm('Tem certeza que deseja apagar todos os dados?')) {
+      setTransactions([]);
+      setGoals([]);
+      setInvestments([]);
+      localStorage.removeItem('lumina_transactions');
+      localStorage.removeItem('lumina_goals');
+      localStorage.removeItem('lumina_investments');
+      alert('Dados apagados.');
+    }
+  };
+
+  const handleExportData = () => {
+    const data = { transactions, goals, investments, exportDate: new Date().toISOString(), version: '2.1' };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lumina_backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportData = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const parsed = JSON.parse(content);
+        if (Array.isArray(parsed.transactions)) {
+          setTransactions(parsed.transactions);
+          setGoals(parsed.goals || []);
+          setInvestments(parsed.investments || []);
+          alert('Backup restaurado!');
+          setCurrentView('dashboard');
+        }
+      } catch (err) {
+        alert('Erro ao ler arquivo.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const renderView = () => {
+    switch (currentView) {
+      case 'dashboard':
+        return (
+          <Dashboard 
+            summary={summary} 
+            recentTransactions={currentMonthTransactions} 
+            currentDate={currentDate}
+            onOpenSettings={() => setCurrentView('settings')}
+            onMonthChange={changeMonth}
+            onToggleStatus={handleToggleStatus}
+            onDeleteTransaction={handleDeleteTransaction}
+          />
+        );
+      case 'add':
+        return <AddTransaction initialDate={currentDate} onSave={handleAddTransaction} onCancel={() => setCurrentView('dashboard')} />;
+      case 'analytics':
+        return <Analytics transactions={transactions} />; 
+      case 'planning':
+        return <Planning goals={goals} summary={summary} addGoal={handleAddGoal} />;
+      case 'investments':
+        return <Investments investments={investments} onAddInvestment={handleAddInvestment} onDeleteInvestment={handleDeleteInvestment} />;
+      case 'settings':
+        return <Settings onBack={() => setCurrentView('dashboard')} onReset={handleResetData} onExport={handleExportData} onImport={handleImportData} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-white font-sans selection:bg-primary selection:text-white">
+      <div className="max-w-md mx-auto min-h-screen relative bg-background shadow-2xl overflow-hidden">
+        <div className="h-safe-top w-full bg-background/50 backdrop-blur-sm sticky top-0 z-40"></div>
+        <main className="px-6 min-h-[calc(100vh-80px)]">{renderView()}</main>
+        {currentView !== 'add' && currentView !== 'settings' && (
+          <Navbar currentView={currentView} setView={setCurrentView} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default App;
