@@ -16,7 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
   ];
 
   return (
-    <div className="absolute bottom-0 left-0 w-full bg-[#030712]/90 backdrop-blur-xl border-t border-white/5 pb-safe pt-2 px-4 z-50">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#030712]/90 backdrop-blur-xl border-t border-white/5 pb-safe pt-2 px-4 z-50">
       <div className="flex justify-between items-center h-16">
         {navItems.map((item) => {
           const isActive = currentView === item.id;

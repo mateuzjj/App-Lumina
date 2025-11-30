@@ -209,20 +209,18 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-[100dvh] bg-black flex justify-center">
-      <div className="w-full max-w-md h-full bg-background relative flex flex-col shadow-2xl overflow-hidden font-sans">
+    <div className="flex justify-center min-h-[100dvh] bg-black">
+      <div className="w-full max-w-md bg-background relative flex flex-col shadow-2xl min-h-[100dvh]">
         
         {/* Top Safety Spacer */}
-        <div className="shrink-0 h-safe-top bg-background/50 backdrop-blur-sm z-40"></div>
+        <div className="shrink-0 h-safe-top bg-background/50 backdrop-blur-sm sticky top-0 z-40"></div>
 
-        {/* Scrollable Content Container */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden w-full relative touch-scroll">
-          <main className="px-6 pb-24 min-h-full">
-            {renderView()}
-          </main>
-        </div>
+        {/* Main Content - Native Flow */}
+        <main className="px-6 pb-24 flex-1">
+          {renderView()}
+        </main>
 
-        {/* Navbar - Only show if not in modal views */}
+        {/* Navbar - Fixed at bottom of viewport */}
         {currentView !== 'add' && currentView !== 'settings' && (
           <Navbar currentView={currentView} setView={setCurrentView} />
         )}
