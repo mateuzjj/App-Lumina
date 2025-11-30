@@ -71,9 +71,9 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ initialDate, onS
   const currentCategory = CATEGORIES.find(c => c.id === category);
 
   return (
-    <div className="absolute inset-0 bg-[#030712] z-[60] flex flex-col animate-slide-up h-full overflow-hidden select-none">
+    <div className="absolute inset-0 bg-[#030712] z-[60] flex flex-col animate-slide-up h-full overflow-y-auto no-scrollbar touch-scroll select-none">
       
-      <div className="flex justify-between items-center px-6 pt-6 pb-2 relative z-20">
+      <div className="flex justify-between items-center px-6 pt-6 pb-2 relative z-20 shrink-0">
         <button onClick={onCancel} className="p-3 -ml-3 text-slate-400 hover:text-white active:scale-90 transition-all rounded-full hover:bg-white/5">
           <X size={24} />
         </button>
@@ -95,7 +95,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ initialDate, onS
         <div className="w-10"></div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center min-h-0 relative -mt-8 z-10">
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[200px] relative -mt-8 z-10 shrink-0">
          <span className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mb-4 opacity-70">Valor da Transação</span>
          
          <div className="flex items-baseline gap-1 px-4 scale-125 origin-center">
@@ -120,12 +120,12 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ initialDate, onS
          </div>
       </div>
 
-      <div className="bg-[#111827] rounded-t-[36px] border-t border-white/5 pb-8 shadow-[0_-10px_60px_rgba(0,0,0,0.6)] flex flex-col h-auto max-h-[60%] backdrop-blur-3xl relative z-20">
+      <div className="bg-[#111827] rounded-t-[36px] border-t border-white/5 pb-8 shadow-[0_-10px_60px_rgba(0,0,0,0.6)] flex flex-col h-auto shrink-0 backdrop-blur-3xl relative z-20">
         
         <div className="pt-6 pb-2">
             <div 
                 ref={scrollContainerRef}
-                className="flex overflow-x-auto px-[50%] gap-6 no-scrollbar snap-x snap-mandatory py-2 items-end h-24"
+                className="flex overflow-x-auto px-[50%] gap-6 no-scrollbar snap-x snap-mandatory py-2 items-end h-24 touch-scroll"
                 style={{ scrollBehavior: 'smooth' }}
             >
                 {CATEGORIES.map(cat => {
@@ -207,7 +207,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ initialDate, onS
             </div>
         )}
 
-        <div className="grid grid-cols-3 gap-3 px-6 pb-safe mt-2">
+        <div className="grid grid-cols-3 gap-3 px-6 pb-safe mt-2 h-64 shrink-0">
             {['1','2','3','4','5','6','7','8','9'].map((digit) => (
                 <button
                     key={digit}

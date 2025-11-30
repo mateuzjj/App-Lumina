@@ -209,15 +209,15 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-black flex justify-center">
+    <div className="fixed inset-0 w-full h-[100dvh] bg-black flex justify-center">
       <div className="w-full max-w-md h-full bg-background relative flex flex-col shadow-2xl overflow-hidden font-sans">
         
         {/* Top Safety Spacer */}
         <div className="shrink-0 h-safe-top bg-background/50 backdrop-blur-sm z-40"></div>
 
         {/* Scrollable Content Container */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden w-full relative scroll-smooth">
-          <main className="px-6 pb-24">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden w-full relative touch-scroll">
+          <main className="px-6 pb-24 min-h-full">
             {renderView()}
           </main>
         </div>

@@ -7,13 +7,20 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Disable native body scroll */
+    overflow: hidden; /* Prevent body scroll */
+    overscroll-behavior: none; /* Prevent bounce on body */
   }
   
   body {
     @apply bg-[#030712] text-white selection:bg-primary selection:text-white;
     -webkit-tap-highlight-color: transparent;
   }
+}
+
+/* Enable iOS Momentum Scrolling */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 .loader {
