@@ -71,7 +71,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({ initialDate, onS
   const currentCategory = CATEGORIES.find(c => c.id === category);
 
   return (
-    <div className="fixed inset-0 bg-[#030712] z-50 flex flex-col animate-slide-up h-full overflow-hidden select-none">
+    <div className="absolute inset-0 bg-[#030712] z-[60] flex flex-col animate-slide-up h-full overflow-hidden select-none">
       
       <div className="flex justify-between items-center px-6 pt-6 pb-2 relative z-20">
         <button onClick={onCancel} className="p-3 -ml-3 text-slate-400 hover:text-white active:scale-90 transition-all rounded-full hover:bg-white/5">
