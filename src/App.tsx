@@ -208,6 +208,9 @@ const App: React.FC = () => {
     }
   };
 
+  // Determine if we need standard padding or if the view handles it (like AddTransaction)
+  const isFullBleed = currentView === 'add';
+
   return (
     <div className="flex justify-center min-h-[100dvh] bg-black">
       <div className="w-full max-w-md bg-background relative flex flex-col shadow-2xl min-h-[100dvh]">
@@ -216,7 +219,7 @@ const App: React.FC = () => {
         <div className="shrink-0 h-safe-top bg-background/50 backdrop-blur-sm sticky top-0 z-40"></div>
 
         {/* Main Content - Native Flow */}
-        <main className="px-6 pb-24 flex-1">
+        <main className={`flex-1 ${isFullBleed ? '' : 'px-6 pb-24'}`}>
           {renderView()}
         </main>
 
